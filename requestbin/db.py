@@ -1,5 +1,3 @@
-import feedparser
-import time
 import re
 from requestbin import config
 from requestbin.models import Bin

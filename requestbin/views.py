@@ -43,6 +43,7 @@ def bin(name):
         update_recent_bins(name)
         return render_template('bin.html',
             bin=bin,
+            bin_exp_hours=int(db.bin_ttl/3600),
             base_url=request.scheme+'://'+request.host)
     else:
         db.create_request(bin, request)
