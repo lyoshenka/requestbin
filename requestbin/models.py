@@ -84,7 +84,6 @@ class Request(object):
             for k in input.form:
                 self.form_data.append([k, input.values[k]])
 
-            self.body = self.as_string(input.data)
             self.path = input.path
             self.content_type = self.headers.get("Content-Type", "")
 
@@ -114,7 +113,6 @@ class Request(object):
             query_string=self.query_string,
             raw=self.raw,
             form_data=self.form_data,
-            body=self.body,
             path=self.path,
             content_length=self.content_length,
             content_type=self.content_type,
@@ -132,8 +130,8 @@ class Request(object):
         if curl_headers:
             curl_command += f"\\\n{curl_headers}"
 
-        if self.body:
-            curl_command += f"\\\n  -d '{self.body}'"
+        if self.raw:
+            curl_command += f"\\\n  -d '{self.raw}'"
 
         return curl_command
 
