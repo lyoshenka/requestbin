@@ -185,6 +185,9 @@ public class RequestBinTutorial {
     <div class="request-body" data-id="{{ request.id }}">
 <pre class="body prettyprint">{%if request.raw%}{{request.raw}}{%else%}<em>None</em>{%endif%}</pre>
 
+  <h5>AS CURL</h5>
+  <div class="request-body">
+    <pre class="body prettyprint">{{request.to_curl}}</pre>
   </div>
 </div>
 {% endmacro %}

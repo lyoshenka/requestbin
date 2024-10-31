@@ -69,6 +69,7 @@ class Request(object):
     def __init__(self, input=None):
         if input:
             self.id = tinyid(6)
+            self.url = input.url
             self.time = time.time()
             self.remote_addr = input.headers.get('X-Forwarded-For', input.remote_addr)
             self.method = input.method
@@ -83,7 +84,7 @@ class Request(object):
             for k in input.form:
                 self.form_data.append([k, input.values[k]])
 
-            self.body = input.data
+            self.body = self.as_string(input.data)
             self.path = input.path
             self.content_type = self.headers.get("Content-Type", "")
 
@@ -98,13 +99,14 @@ class Request(object):
     
     def as_string(self, bytes):
         try:
-            return str(bytes, "utf-16")
+            return str(bytes, "utf-8")
         except (UnicodeDecodeError, AttributeError):
             return "".join(chr(x) for x in bytes) #old format
 
     def to_dict(self):
         return dict(
             id=self.id,
+            url=self.url,
             time=self.time,
             remote_addr=self.remote_addr,
             method=self.method,
@@ -117,6 +119,24 @@ class Request(object):
             content_length=self.content_length,
             content_type=self.content_type,
         )
+
+    @property
+    def to_curl(self):
+        curl_command = f"curl -X {self.method} '{self.url}'"
+
+        curl_headers = "\\\n".join([
+            f"  -H '{header}: {value}'"
+            for header, value in self.headers.items()
+            if header.lower() not in ['host', 'content-length']
+        ])
+        if curl_headers:
+            curl_command += f"\\\n{curl_headers}"
+
+        if self.body:
+            curl_command += f"\\\n  -d '{self.body}'"
+
+        return curl_command
+
 
     @property
     def created(self):

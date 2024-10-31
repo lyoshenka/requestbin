@@ -1,13 +1,16 @@
-app:
+name: requestbin
+
+services:
+  app:
     build: .
     environment:
-        REALM: prod
-        REDIS_URL: "//redis:6379"
-        WORKERS: 2
+      REALM: prod
+      REDIS_URL: "//redis:6379"
+      WORKERS: 2
     links:
-        - redis
+      - redis
     ports:
-        - "8000:8000"
+      - "8000:8000"
 
-redis:
+  redis:
     image: redis
